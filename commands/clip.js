@@ -1,41 +1,19 @@
+const fs = require("fs");
+
 module.exports = {
-  name: "clip",
-  description: "Plays a clip sound",
-  async execute(message, args) {
-    const { channel } = message.member.voice;
-    const queue = message.client.queue.get(message.guild.id);
+  name: "clips",
+  description: "List all clips",
+  execute(message) {
+    fs.readdir("./sounds", function(err, files) {
+      if (err) return console.log("Unable to read directory: " + err);
 
-    if (!args.length) return message.reply("Usage: /clip <name>").catch(console.error);
-    if (queue) return message.reply("Can't play clip because there is an active queue.");
-    if (!channel) return message.reply("You need to join a voice channel first!").catch(console.error);
+      let clips = [];
 
-    const queueConstruct = {
-      textChannel: message.channel,
-      channel,
-      connection: null,
-      songs: [],
-      loop: false,
-      volume: 100,
-      playing: true
-    };
+      files.forEach(function(file) {
+        clips.push(file.substring(0, file.length - 4));
+      });
 
-    message.client.queue.set(message.guild.id, queueConstruct);
-
-    try {
-      queueConstruct.connection = await channel.join();
-      const dispatcher = queueConstruct.connection
-        .play(`./sounds/${args[0]}.mp3`)
-        .on("finish", () => {
-          message.client.queue.delete(message.guild.id);
-          channel.leave();
-        })
-        .on("error", err => {
-          message.client.queue.delete(message.guild.id);
-          channel.leave();
-          console.error(err);
-        });
-    } catch (error) {
-      console.error(error);
-    }
+      message.reply(`${clips.join(" ")}`).catch(console.error);
+    });
   }
 };
