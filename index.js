@@ -20,7 +20,7 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  */
 client.on("ready", () => {
    function randomStatus() {
- let status = ["Owlbert Is My Brother", "Made By MeetThumar", "I Love Music", ".help | .play"]
+ let status = ["I Love Music", "(prefix)help | (prefix)play"]
 let rstatus = Math.floor(Math.random() * status.length);
 
 client.user.setActivity(status[rstatus], {type: "WATCHING" });
